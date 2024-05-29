@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Produk;
+use RealRashid\SweetAlert\Facades\Alert;
 use App\Models\JenisProduk;
 use DB;
 
@@ -18,6 +19,7 @@ class ProdukController extends Controller
         $produk = Produk::join('jenis_produk', 'jenis_produk_id', '=', 'jenis_produk.id')
         ->select('produk.*', 'jenis_produk.nama as jenis')
         ->get();
+        
         return view ('admin.produk.index', compact('produk'));
     }
 
@@ -36,6 +38,34 @@ class ProdukController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+           'kode' => 'required|unique:produk|max:10',
+           'nama' => 'required|max:45',
+           'harga_beli' => 'required|numeric',
+           'harga_jual' => 'required|numeric',
+           'stok' => 'required|numeric',
+           'min_stok' => 'required|numeric',
+           'foto' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
+           
+
+        ],
+        [
+            'kode.max' => 'Kode Maksimal 10 Karakter',
+            'kode.required' => 'Kolom Kode Wajib diisi',
+            'kode.unique' => 'Kode Tidak Boleh Sama',
+            'nama.required' => 'Kolom Nama Wajib diisi',
+            'nama.max' => 'Nama Maksimal 45 Karakter',
+            'harga_beli.required' => 'Kolom Ini Wajib Diisi',
+            'harga_jual.required' => 'Kolom Ini Wajib Diisi',
+            'stok.required' => 'Kolom Ini Wajib Diisi',
+            'min_stok.required' => 'Kolom Ini Wajib Diisi',
+            'foto.max' => 'Foto Maksimal 2MB',
+            'foto.mimes' => 'File Ekstensi hanya bisa jpg, png, jpeg, gif, svg',
+        ]
+    
+    );
+
+
         //proses upload foto
         //jika file foto ada yang terupload
         if(!empty($request->foto)){
@@ -58,6 +88,7 @@ class ProdukController extends Controller
             'foto'=>$fileName,
             'jenis_produk_id'=>$request->jenis_produk_id,
         ]);
+        Alert::success('Tambahkan Produk', 'Berhasil Menambahkan Produk');
         return redirect('admin/produk');
     }
 
@@ -118,7 +149,8 @@ class ProdukController extends Controller
             'foto'=>$fileName,
             'jenis_produk_id'=>$request->jenis_produk_id,
         ]);
-        return redirect('admin/produk');
+        // Alert::success('Update Produk', 'Berhasil Update Produk');
+        return redirect('admin/produk')->with('success', 'Berhasil Menambahka  Produk');
     }
 
     /**
@@ -126,6 +158,8 @@ class ProdukController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        //Fungsi hpus dengan query builder
+        DB::table('produk')->where('id', $id)->delete();
+        return redirect ('admin/produk');
     }
 }
