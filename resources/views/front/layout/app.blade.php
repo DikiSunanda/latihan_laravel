@@ -13,8 +13,9 @@
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="{{asset('front')}}/css/styles.css" rel="stylesheet" />
     </head>
-    @include('sweetalert::alert')
+    
     <body>
+    @include('sweetalert::alert')
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container px-4 px-lg-5">

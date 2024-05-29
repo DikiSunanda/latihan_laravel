@@ -37,7 +37,7 @@ Route::get('/daftar_nilai', function(){
 
 
 //Midleware berguna sebagai pembatas atau validasi antara visitor yang sudah memiliki user akses dan yang belum punya
-Route::group(['middleware' => ['auth']], function(){
+Route::group(['middleware' => ['auth', 'role:admin|manager|staff']], function(){
 
 //prefix and grouping adalah mengelompokkan routing ke satu jenis route
 Route::prefix('admin')->group(function(){
