@@ -6,7 +6,7 @@ use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\KartuController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\DashboardController;
-
+use App\Http\Controllers\UserController;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
@@ -37,11 +37,13 @@ Route::get('/daftar_nilai', function(){
 
 
 //Midleware berguna sebagai pembatas atau validasi antara visitor yang sudah memiliki user akses dan yang belum punya
-Route::group(['middleware' => ['auth', 'role:admin|manager|staff']], function(){
+Route::group(['middleware' => ['auth', 'checkActive','role:admin|manager|staff']], function(){
 
 //prefix and grouping adalah mengelompokkan routing ke satu jenis route
 Route::prefix('admin')->group(function(){
-
+Route::get('/user', [UserController::class, 'index']);
+Route::post('/user/{user}/activate', [UserController::class, 'activate'])->name('admin.user.activate');
+Route::get('/profile',[UserController::class, 'showProfile']);
     //route memnggil dashbord
     //route by name adalah routing yang diberikan penamaan untuk kemudian dipanggil di link
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
